@@ -1,9 +1,20 @@
 package com.challenge.screensound.principal;
 
+import com.challenge.screensound.models.Artista;
+import com.challenge.screensound.models.Musica;
+import com.challenge.screensound.models.TipoArtista;
+import com.challenge.screensound.repository.ArtistaRepository;
+
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Principal {
+    private final ArtistaRepository repository;
     private Scanner leitura = new Scanner(System.in);
+
+    public Principal(ArtistaRepository repository) {
+        this.repository = repository;
+    }
 
     public void exibeMenu() {
         var opcao = -1;
@@ -42,7 +53,7 @@ public class Principal {
                     pesquisarDadosDoArtista();
                     break;
                 case 9:
-                    System.out.println("Saindo!");
+                    System.out.println("Saindo...");
                     break;
                 default:
                     System.out.println("Opção inválida!");
@@ -60,8 +71,32 @@ public class Principal {
     }
 
     private void cadastrarMusicas() {
+        System.out.println("Cadastrar musica de qual artista: ");
+        var nomeArtista = leitura.nextLine();
+        Optional<Artista> artista = repository.findByNomeContainingIgnoreCase(nomeArtista);
+        if (artista.isPresent()){
+            System.out.println("Digite o titulo da música: ");
+            var nomeMusica = leitura.nextLine();
+            Musica musica = new Musica(nomeMusica);
+            musica.setArtista(artista.get());
+            repository.save(artista.get());
+        } else {
+            System.out.println("Artista não encontrado!");
+        }
     }
 
     private void cadastrarArtistas() {
+        var cadastrarNovo = "S";
+        while (cadastrarNovo.equalsIgnoreCase("s")) {
+            System.out.println("Digite o nome do artista");
+            var nome = leitura.nextLine();
+            System.out.println("Digite o tipo de artista: (solo, dupla ou banda)");
+            var tipo = leitura.nextLine();
+            TipoArtista tipoArtista = TipoArtista.valueOf(tipo.toUpperCase());
+            Artista artista = new Artista(nome, tipoArtista);
+            repository.save(artista);
+            System.out.println("Cadastrar novo artista? (S/N)");
+            cadastrarNovo = leitura.nextLine();
+        }
     }
 }
