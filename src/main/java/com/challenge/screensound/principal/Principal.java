@@ -4,6 +4,7 @@ import com.challenge.screensound.models.Artista;
 import com.challenge.screensound.models.Musica;
 import com.challenge.screensound.models.TipoArtista;
 import com.challenge.screensound.repository.ArtistaRepository;
+import com.challenge.screensound.services.ConsultaChatGPT;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +64,10 @@ public class Principal {
     }
 
     private void pesquisarDadosDoArtista() {
+        System.out.println("Pesquisar dados sobre qual artista: ");
+        var nome = leitura.nextLine();
+        var response = ConsultaChatGPT.obterInformacao(nome);
+        System.out.println(response.trim());
     }
 
     private void buscarMusicasPorArtista() {
