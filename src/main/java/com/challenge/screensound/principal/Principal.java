@@ -5,6 +5,7 @@ import com.challenge.screensound.models.Musica;
 import com.challenge.screensound.models.TipoArtista;
 import com.challenge.screensound.repository.ArtistaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -65,9 +66,15 @@ public class Principal {
     }
 
     private void buscarMusicasPorArtista() {
+        System.out.println("Buscar musicas de qual artista: ");
+        var nome = leitura.nextLine();
+        List<Musica> musicas = repository.buscaMusicaPorArtista(nome);
+        musicas.forEach(System.out::println);
     }
 
     private void listarMusicas() {
+        List<Artista> artistas = repository.findAll();
+        artistas.forEach(a -> a.getMusicas().forEach(System.out::println));
     }
 
     private void cadastrarMusicas() {
@@ -79,6 +86,7 @@ public class Principal {
             var nomeMusica = leitura.nextLine();
             Musica musica = new Musica(nomeMusica);
             musica.setArtista(artista.get());
+            artista.get().getMusicas().add(musica);
             repository.save(artista.get());
         } else {
             System.out.println("Artista não encontrado!");
